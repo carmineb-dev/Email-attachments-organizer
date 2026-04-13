@@ -1,0 +1,7 @@
+{
+    "email": "your_email@example.com",
+    "imap_server": "imap.example.com",
+    "rules":{
+        "enel" : "bollette_luce"
+    }
+}
