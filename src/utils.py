@@ -1,4 +1,5 @@
 from email.header import decode_header
+import re
 
 def decode_mime_words(s):
     decoded_parts=decode_header(s)
@@ -11,3 +12,7 @@ def decode_mime_words(s):
             decoded_string+=part
     
     return decoded_string
+
+def extract_email(sender):
+    match=re.search(r'[\w\.-]+@[\w\.-]+', sender)
+    return match.group(0).lower() if match else sender.lower()

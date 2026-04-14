@@ -1,5 +1,25 @@
-__pycache__/
+# Virtual environment
 .venv/
-*.pyc
-.env
+venv/
+env/
+
+# Config
 config/config.json
+.env
+
+# Python
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
