@@ -3,6 +3,10 @@
 venv/
 env/
 
+# Environment files
+.env
+*.env
+
 # Config
 config/config.json
 .env
@@ -31,3 +35,4 @@ Thumbs.db
 
 # Logs
 logs/
+*.log

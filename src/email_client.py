@@ -4,13 +4,15 @@ import email
 import os
 from utils import decode_mime_words, extract_email
 from db_manager import already_processed, mark_as_processed
+from dotenv import load_dotenv
 
 def process_emails(config, logger):
+    load_dotenv()
 
-    EMAIL = config ["email"]["user"]
-    PASSWORD = config ["email"]["password"]
-    IMAP_SERVER = config ["email"]["imap_server"]
-    IMAP_PORT = config["email"]["imap_port"]
+    EMAIL = os.getenv("EMAIL_USER")
+    PASSWORD = os.getenv("EMAIL_PASSWORD")
+    IMAP_SERVER = os.getenv("IMAP_SERVER")
+    IMAP_PORT = int(os.getenv("IMAP_PORT"))
     MAX_EMAILS=config.get("settings", {}).get("max_emails", 5)
 
     # Connect to email address
