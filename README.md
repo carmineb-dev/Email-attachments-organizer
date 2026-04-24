@@ -58,7 +58,7 @@ Clone the repository:
 
 ```bash
 
-git clone https://github.com/carmineb-dev/Email-attachments-organizer.git
+git clone https://github.com/carmineb-dev/Email-attachments-organizer.git email-attachments-organizer
 cd email-attachments-organizer
 ```
 
