@@ -14,11 +14,13 @@ The system tracks processed emails using a local SQLite database to avoid duplic
 - Prevents duplicate processing using SQLite database
 - Logs execution to console and file
 - Uses environment variables for secure credential management
+- REST API for remote/programmatic access (history, rules management, processing trigger)
 
 ---
 
 ## Tech Stack
 - Python 3
+- FastAPI + Uvicorn
 - IMAP (imaplib)
 - SQLite3
 - python-dotenv
@@ -38,6 +40,7 @@ The system tracks processed emails using a local SQLite database to avoid duplic
 ├── config/
 │   └── config.example.json
 ├── src/
+│   ├── api.py
 │   ├── cli.py
 │   ├── config_manager.py
 │   ├── db_manager.py
@@ -81,7 +84,7 @@ source .venv/bin/activate # Linux / Mac
 
 pip install -r requirements.txt
 ```
-> The project mainly uses Python standard libraries.
+> Includes FastAPI and Uvicorn for the API, alongside standard library modules used by the CLI.
 
 ---
 
@@ -120,11 +123,65 @@ Create a config.json file in the config folder
 
 ## Usage
 
+### CLI
+
 Run the application:
 
 ```bash
 python src/main.py
 ```
+
+## REST API
+
+Start the API server from the `src` folder:
+
+```bash
+uvicorn api:app --reload
+```
+
+The API is available at `http://localhost:8000`
+
+Interactive documentation is auto-generated at:
+```
+http://localhost:8000/docs
+```
+
+## Available endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/` | API status |
+| GET | `/history` | List of already processed emails (from SQLite) |
+| POST | `/process` | Triggers email processing (IMAP fetch + sorting) |
+| GET | `/rules` | List of sender → folder rules |
+| POST | `/rules` | Add a new rule |
+| PUT | `/rules/{sender}` | Update the destination folder for an existing sender |
+| DELETE | `/rules/{sender}` | Remove an existing rule |
+| PUT | `/settings` | Update runtime settings (e.g. max_emails) |
+
+#### Example requests
+
+Add a rule:
+
+```bash
+curl -X POST http://localhost:8000/rules \
+  -H "Content-Type: application/json" \
+  -d '{"sender": "boss@example.com", "folder": "Lavoro"}'
+```
+
+Trigger email processing:
+
+```bash
+curl -X POST http://localhost:8000/process
+```
+
+Check processed history:
+
+```bash
+curl http://localhost:8000/history
+```
+
+---
 
 ## How It Works
 
@@ -137,6 +194,8 @@ python src/main.py
 7. Downloads attachments
 8. Saves files into corresponding folders
 9. Marks emails as processed
+
+> The REST API reuses the same business logic (`email_client.py`, `db_manager.py`, `config_manager.py`) as the CLI, with no code duplication. File paths for the database and config are resolved dynamically using `pathlib`, independent of the directory the command is run from.
 
 ---
 
@@ -171,9 +230,9 @@ Logs are:
 
 ## Future Improvements
 
-- Better CLI Interface (arguments for filters, limits, dry-run)
 - Support for multiple email providers (Gmail, Outlook, etc.)
 - Improved attachment filtering (size/type rules)
 - Retry mechanism for network errors
 - Better sender normalization
+- Authentication layer for the API (currently intended for local/personal use)
 
